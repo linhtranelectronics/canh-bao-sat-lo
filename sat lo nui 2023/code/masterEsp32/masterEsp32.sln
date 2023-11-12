@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.33026.149
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "masterEsp32", "masterEsp32\masterEsp32.vcxproj", "{218B8770-214B-47CA-B1FA-F2B172259316}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
+		Release|ARM = Release|ARM
+		Release|ARM64 = Release|ARM64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{218B8770-214B-47CA-B1FA-F2B172259316}.Debug|ARM.ActiveCfg = Debug|ARM
+		{218B8770-214B-47CA-B1FA-F2B172259316}.Debug|ARM.Build.0 = Debug|ARM
+		{218B8770-214B-47CA-B1FA-F2B172259316}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{218B8770-214B-47CA-B1FA-F2B172259316}.Debug|ARM64.Build.0 = Debug|ARM64
+		{218B8770-214B-47CA-B1FA-F2B172259316}.Release|ARM.ActiveCfg = Release|ARM
+		{218B8770-214B-47CA-B1FA-F2B172259316}.Release|ARM.Build.0 = Release|ARM
+		{218B8770-214B-47CA-B1FA-F2B172259316}.Release|ARM64.ActiveCfg = Release|ARM64
+		{218B8770-214B-47CA-B1FA-F2B172259316}.Release|ARM64.Build.0 = Release|ARM64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E7EB246D-0237-4ADA-AA48-5B4A441D2DD1}
+	EndGlobalSection
+EndGlobal
