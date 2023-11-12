@@ -10,6 +10,8 @@
 #include <LoRa.h>
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
+#include <WiFi.h>
+#include <ThingSpeak.h>
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 //define the pins used by the transceiver module
@@ -21,7 +23,15 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 #define BUTTON 13
 #define BUZZER 14
 
-uint32_t  startTimeWanring, lastimeSendSMS, lastTimeReceiveWanring;
+char *ssid = "free";   // your network SSID (name) 
+char *pass = "12345678";   // your network password
+int keyIndex = 0;            // your network key Index number (needed only for WEP)
+WiFiClient  client;
+
+unsigned long myChannelNumber = 943446;
+const char * myWriteAPIKey = "JHPOR3QZMQY70BAN";
+
+uint32_t  startTimeWanring, lastimeSendSMS, lastTimeReceiveWanring, lastTimeSendThingSpeak;
 bool enableSendSMS;
 uint32_t NOW;
 struct rev
@@ -71,6 +81,9 @@ void setup() {
 	Serial.println("LoRa Initializing Successful!");
 	//sendSMS("0335644677", "canh bao!!!");
 	wanring.wanringDone = true;
+	WiFi.mode(WIFI_STA);
+	ThingSpeak.begin(client);  // Initialize ThingSpeak
+	connectWifi();
 }
 
 void loop() {
@@ -95,6 +108,15 @@ void loop() {
 		Serial.println("SEND SMS");
 		enableSendSMS = false;
 		wanring.numOfSMS++;
+	}
+	if (lastTimeSendThingSpeak + 10000 <= NOW) {
+		lastTimeSendThingSpeak = NOW;
+		int x = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
+		if (x == 200) {
+			Serial.println("Channel update successful.");
+		} else {
+			Serial.println("Problem updating channel. HTTP error code " + String(x));
+		}
 	}
 
 
@@ -134,6 +156,7 @@ void receiveDataFromNode() {
 		lcd.print(receiveData.temp);
 		lcd.print("  W ");
 		lcd.print(receiveData.detect);
+		lcd.print("  ");
 		if (receiveData.detect == 1 && lastTimeReceiveWanring + 5000 <= NOW) {
 			lastTimeReceiveWanring = NOW;
 			wanring.id = receiveData.id;
@@ -142,5 +165,41 @@ void receiveDataFromNode() {
 			wanring.startTime = NOW;
 			wanring.wanringDone = false;
 		}
+		if (receiveData.id == 0) {
+			ThingSpeak.setField(1, receiveData.temp);
+			ThingSpeak.setField(2, receiveData.hum);
+			//ThingSpeak.setField(3, receiveData.detect);
+		}
+		else if (receiveData.id == 1) {
+			ThingSpeak.setField(4, receiveData.temp);
+			ThingSpeak.setField(5, receiveData.hum);
+			//ThingSpeak.setField(6, receiveData.detect);
+		}
+		if (wanring.wanringDone == false) {
+			if (wanring.id == 0) {
+				ThingSpeak.setField(3, receiveData.detect);
+			}
+			else {
+				ThingSpeak.setField(6, receiveData.detect);
+			}
+		}
+		else {
+			ThingSpeak.setField(3, receiveData.detect);
+			ThingSpeak.setField(6, receiveData.detect);
+		}
+	}
+}
+void connectWifi() {
+	// Connect or reconnect to WiFi
+	if (WiFi.status() != WL_CONNECTED) {
+		Serial.print("Attempting to connect to SSID: ");
+		Serial.println(ssid);
+		WiFi.begin(ssid, pass);
+		while (WiFi.status() != WL_CONNECTED) {
+			 // Connect to WPA/WPA2 network. Change this line if using open or WEP network
+			Serial.print("c");
+			delay(200);
+		}
+		Serial.println("\nConnected.");
 	}
 }
